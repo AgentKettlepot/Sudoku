@@ -40,7 +40,7 @@ public class Tester {
         // Deductive d_solver = new Deductive(test_case_2);
         // d_solver.Deductive_solve();
 
-        Population p_solver = new Population(test_case_3, 10);
+        Population p_solver = new Population(test_case_3, 1000);
         p_solver.solve();
     }
 }

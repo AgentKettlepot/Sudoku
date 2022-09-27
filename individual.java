@@ -1,11 +1,13 @@
 public class individual implements Comparable<individual> {
     int[][] board = new int[9][9];
     int score;
+    int[][] ORIGINAL_BOARD = new int[9][9];
 
     public individual(int[][] b, int sc) {
         for (int r = 0; r < board.length; r++) {
             for (int c = 0; c < board[0].length; c++) {
                 board[r][c] = b[r][c];
+                ORIGINAL_BOARD[r][c] = b[r][c];
             }
         }
 
@@ -22,6 +24,7 @@ public class individual implements Comparable<individual> {
             }
         }
         score = Fitness_Score(board);
+        // System.out.println(score);
     }
 
     public int Fitness_Score(int[][] board) { // fitness score is number wrong / total number
@@ -34,7 +37,7 @@ public class individual implements Comparable<individual> {
                 }
             }
         }
-        return (int) ((double) counter / (double) (board.length * board[0].length) * 10000);
+        return (int) ((double) counter / 81.0 * 10000);
     }
 
     public static boolean Check(int[][] board, int[] position, int possible_num) {
@@ -101,18 +104,14 @@ public class individual implements Comparable<individual> {
         return true;
     }
 
-    public int GetScore() {
-        return score;
-    }
-
     public int[][] GetBoard() {
         return board;
     }
 
     @Override
     public int compareTo(individual o) {
-        int compareage = ((individual) o).Fitness_Score(board);
-        return this.Fitness_Score(board) - compareage;
+        int compareage = ((individual) o).score;
+        return compareage - this.score;
     }
 
     public void swap(individual second) {

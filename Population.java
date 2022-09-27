@@ -56,9 +56,7 @@ public class Population {
                 int random = (int) (Math.random() * ORIGINAL_SIZE + 1);
                 for (int i = 0; i < random; i++) {
                     generation.add(new individual(ORIGINAL_BOARD.clone(), 0));
-                }
-                for (int j = prev_size - 1; j < generation.size(); j++) {
-                    generation.get(j).solve();
+                    generation.get(prev_size + i).solve();
                 }
 
                 // Swap genomes in generation n
@@ -74,12 +72,24 @@ public class Population {
 
                 // Mutate? - optional for now
                 generations -= 1;
-                System.out.println(all_generation.get(all_generation.size() - 1).get(0).Fitness_Score(board));
+                System.out.println(all_generation.get(all_generation.size() - 1).get(0).score);
                 all_generation.add(generation);
 
             }
-
         }
+
+        int max_score = 0;
+        for (List<individual> l : all_generation) {
+            for (individual i : l) {
+                if (i.score > max_score) {
+                    board = i.GetBoard();
+                    max_score = i.score;
+                }
+            }
+        }
+        System.out.println(String.format("Highest Score: %d", max_score));
+        System.out.println("Board with highest score:\n");
+        PrintBoard(board);
     }
 
     public static void PrintBoard(int[][] board) {
