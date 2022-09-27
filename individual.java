@@ -111,8 +111,8 @@ public class individual implements Comparable<individual> {
 
     @Override
     public int compareTo(individual o) {
-        int compareage = ((individual) o).GetScore();
-        return this.GetScore() - compareage;
+        int compareage = ((individual) o).Fitness_Score(board);
+        return this.Fitness_Score(board) - compareage;
     }
 
     public void swap(individual second) {

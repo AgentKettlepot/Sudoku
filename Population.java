@@ -2,82 +2,84 @@
 import java.util.*;
 
 public class Population {
-    static int population_size;
+    static int generations;
+    static int ORIGINAL_SIZE;
+    static int[][] ORIGINAL_BOARD;
     static int[][] board;
     List<List<individual>> all_generation = new ArrayList<>();
 
     public Population(int[][] br, int pop_size) {
-        population_size = pop_size;
+        generations = pop_size;
         board = br;
+        ORIGINAL_SIZE = pop_size;
+        ORIGINAL_BOARD = br;
     }
 
     public void solve() {
-        while (population_size > 0 && Board_Check(board) == false) {
-
-            if (all_generation.size() == 0) { // THIS IS FOR FIRST GENERATION
+        while (generations > 0 && Board_Check(board) == false) {
+            if (all_generation.size() == 0) { // THIS IS FOR FIRST GENERATION - WORKS GOOD
                 List<individual> generation = new ArrayList<>();
-                for (int i = 0; i <= population_size; i++) {
-                    generation.add(new individual(board.clone(), 0));
+                for (int i = 0; i <= generations; i++) {
+                    generation.add(new individual(ORIGINAL_BOARD.clone(), 0));
 
                 }
-
                 for (individual i : generation) {
-                    // System.out.println(i);
                     i.solve();
-                    // PrintBoard(i.GetBoard());
-                    // System.out.println("\n\n");
                 }
-                // ----------------------------------------------------------------------
                 all_generation.add(generation);
+
                 // Sort generation by fitness score
                 Collections.sort(generation);
                 board = generation.get(0).GetBoard();
 
-                // Always add the first few (or just first) individual into generation n+1 -
-                // optional for now, necessary later
-
                 // Swap genomes in generation n
                 for (int i = 0; i < generation.size() - 1; i++) {
                     individual one = generation.get(i);
                     individual two = generation.get(i + 1);
                     one.swap(two);
                 }
-
-                // Mutate? - optional for now
-                population_size /= 2;
+                generations -= 1;
             }
 
-            else { // THIS IS FOR AL GENERATIONS AFTER FIRST ONE
+            else { // THIS IS FOR ALL GENERATIONS AFTER FIRST ONE
                 List<individual> generation = new ArrayList<>();
-                generation.addAll(all_generation.get(all_generation.size() - 1)); // becomes children of prev.
-                                                                                  // generation
-
-                while (generation.size() > population_size) { // removes all the ill chilren w/ bad fitness
+                // becomes children of prev. generation
+                generation.addAll(all_generation.get(all_generation.size() - 1));
+                int temp = generation.size() / 2;
+                while (generation.size() > temp) { // removes bad half of generation
                     generation.remove(generation.get(generation.size() - 1));
                 }
-                all_generation.add(generation);
-                // Always add the first few (or just first) individual into generation n+1 -
-                // optional for now, necessary later
+
+                // Adding a few new individuals and the top individuals from previous
+                // generations as more samples
+                int prev_size = generation.size();
+                int random = (int) (Math.random() * ORIGINAL_SIZE + 1);
+                for (int i = 0; i < random; i++) {
+                    generation.add(new individual(ORIGINAL_BOARD.clone(), 0));
+                }
+                for (int j = prev_size - 1; j < generation.size(); j++) {
+                    generation.get(j).solve();
+                }
 
                 // Swap genomes in generation n
                 for (int i = 0; i < generation.size() - 1; i++) {
                     individual one = generation.get(i);
                     individual two = generation.get(i + 1);
-
                     one.swap(two);
-
                 }
 
+                // Sort generation by fitness score
+                Collections.sort(generation);
+                board = generation.get(0).GetBoard();
+
                 // Mutate? - optional for now
-                // Maybe add in a few new individuals just in case we get a good random sample
-                population_size /= 2;
+                generations -= 1;
                 System.out.println(all_generation.get(all_generation.size() - 1).get(0).Fitness_Score(board));
-                // we need more b/c rn the fitness scores will be the same after 1 gen b/c just
-                // first 2 boards are continously being swapped
+                all_generation.add(generation);
+
             }
 
         }
-
     }
 
     public static void PrintBoard(int[][] board) {
