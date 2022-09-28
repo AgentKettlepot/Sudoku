@@ -1,4 +1,3 @@
-
 import java.util.*;
 
 public class Population {
@@ -17,15 +16,15 @@ public class Population {
 
     public void solve() {
         while (generations > 0 && Board_Check(board) == false) {
-            if (all_generation.size() == 0) { // THIS IS FOR FIRST GENERATION - WORKS GOOD
+            if (all_generation.size() == 0) { // THIS IS FOR FIRST GENERATION
                 List<individual> generation = new ArrayList<>();
                 for (int i = 0; i <= generations; i++) {
                     generation.add(new individual(ORIGINAL_BOARD.clone(), 0));
-
                 }
                 for (individual i : generation) {
                     i.solve();
                 }
+
                 all_generation.add(generation);
 
                 // Sort generation by fitness score
@@ -50,14 +49,14 @@ public class Population {
                     generation.remove(generation.get(generation.size() - 1));
                 }
 
-                // Adding a few new individuals and the top individuals from previous
-                // generations as more samples
+                // Adding a few new random samples
                 int prev_size = generation.size();
                 int random = (int) (Math.random() * ORIGINAL_SIZE + 1);
                 for (int i = 0; i < random; i++) {
                     generation.add(new individual(ORIGINAL_BOARD.clone(), 0));
                     generation.get(prev_size + i).solve();
                 }
+                // Adding the top individuals from previous generations
 
                 // Swap genomes in generation n
                 for (int i = 0; i < generation.size() - 1; i++) {
@@ -70,11 +69,11 @@ public class Population {
                 Collections.sort(generation);
                 board = generation.get(0).GetBoard();
 
-                // Mutate? - optional for now
+                // Mutate? - optional for now -------------------------------------
+
                 generations -= 1;
                 System.out.println(all_generation.get(all_generation.size() - 1).get(0).score);
                 all_generation.add(generation);
-
             }
         }
 
@@ -176,5 +175,26 @@ public class Population {
             }
         }
         return true;
+    }
+
+    // Cleans the program and frees space
+    public void clean() {
+        // Randomly select and delete some generations
+        int random = (int) Math.random() * all_generation.size() + 1;
+        random = (int) Math.round((float) random / 2.0);
+        for (int i = 0; i < random; i++) {
+            int gen_to_delete = (int) Math.random() * all_generation.size() + 1;
+            all_generation.remove(gen_to_delete);
+        }
+
+        // In the leftover gens, delete 25% from the back (bad quarter)
+        for (int i = 0; i < all_generation.size(); i++) {
+            List<individual> generation = all_generation.get(i);
+            int temp_size = generation.size();
+            while ((double) generation.size() > temp_size * (3.0 / 4.0)) {
+                generation.remove(generation.size() - 1);
+            }
+        }
+
     }
 }

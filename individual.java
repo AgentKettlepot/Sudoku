@@ -24,7 +24,6 @@ public class individual implements Comparable<individual> {
             }
         }
         score = Fitness_Score(board);
-        // System.out.println(score);
     }
 
     public int Fitness_Score(int[][] board) { // fitness score is number wrong / total number
