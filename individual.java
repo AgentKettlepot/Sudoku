@@ -110,7 +110,7 @@ public class individual implements Comparable<individual> {
     @Override
     public int compareTo(individual o) {
         int compareage = ((individual) o).score;
-        return compareage - this.score;
+        return this.score - compareage;
     }
 
     public void swap(individual second) {

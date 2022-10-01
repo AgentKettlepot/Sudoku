@@ -56,13 +56,18 @@ public class Population {
                     generation.add(new individual(ORIGINAL_BOARD.clone(), 0));
                     generation.get(prev_size + i).solve();
                 }
-                // Adding the top individuals from previous generations
 
                 // Swap genomes in generation n
                 for (int i = 0; i < generation.size() - 1; i++) {
                     individual one = generation.get(i);
                     individual two = generation.get(i + 1);
                     one.swap(two);
+                }
+
+                // Adding the top individuals from previous generations
+                int random_index = (int) Math.random() * (all_generation.get(all_generation.size() - 1).size()) / 2;
+                for (int i = 0; i < random_index; i++) {
+                    generation.add(all_generation.get(all_generation.size() - 1).get(i));
                 }
 
                 // Sort generation by fitness score
@@ -74,6 +79,11 @@ public class Population {
                 generations -= 1;
                 System.out.println(all_generation.get(all_generation.size() - 1).get(0).score);
                 all_generation.add(generation);
+
+                // Cleaning Phase For Generations 100+
+                if (all_generation.size() > 100) {
+                    clean();
+                }
             }
         }
 
@@ -181,7 +191,7 @@ public class Population {
     public void clean() {
         // Randomly select and delete some generations
         int random = (int) Math.random() * all_generation.size() + 1;
-        random = (int) Math.round((float) random / 2.0);
+        random = (int) Math.round((float) random / 3.0);
         for (int i = 0; i < random; i++) {
             int gen_to_delete = (int) Math.random() * all_generation.size() + 1;
             all_generation.remove(gen_to_delete);
